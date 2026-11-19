@@ -1,0 +1,30 @@
+{
+  // Point editors at the schema for completion and inline errors.
+  "$schema": "../schema/iridium.schema.json",
+
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "basePath": "/",
+    "wispPath": "/wisp/",
+    "staticDir": "public",
+  },
+
+  // Open connections directly from the server, through the address policy below.
+  "transport": {
+    "type": "direct",
+    "connectTimeoutMs": 10000,
+  },
+
+  "security": {
+    "blockPrivateAddresses": true,
+    "blockedPorts": [25, 465, 587],
+    // Uncomment to allow only web ports:
+    // "allowedPorts": [80, 443],
+  },
+
+  "logging": {
+    "level": "info",
+    "format": "pretty",
+  },
+}
