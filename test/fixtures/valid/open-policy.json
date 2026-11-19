@@ -1,0 +1,3 @@
+{
+  "security": { "blockPrivateAddresses": false, "blockedPorts": [], "allowedPorts": [1, 65535] }
+}

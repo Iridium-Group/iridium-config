@@ -1,0 +1,3 @@
+{
+  "transport": { "type": "wisp", "url": "wss://wisp.example.org/wisp/", "connectTimeoutMs": 300000 }
+}

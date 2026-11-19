@@ -1,0 +1,5 @@
+{
+  "transport": { "type": "memory" },
+  "server": { "port": 0 },
+  "logging": { "level": "silent" }
+}

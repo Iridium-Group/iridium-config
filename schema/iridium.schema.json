@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Iridium-Group/iridium-config/main/schema/iridium.schema.json",
+  "title": "Iridium configuration",
+  "description": "Configuration file for Iridium servers and clients. Every section and setting is optional; missing settings take their defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Editor hint pointing at this schema. Ignored by the loader."
+    },
+    "server": {
+      "type": "object",
+      "description": "Where an Iridium proxy server listens and what it serves.",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "type": "string",
+          "pattern": "^\\S+$",
+          "default": "0.0.0.0",
+          "description": "Interface to listen on."
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 8080,
+          "description": "TCP port to listen on. 0 picks a free port."
+        },
+        "basePath": {
+          "type": "string",
+          "pattern": "^/[^\\s?#]*$",
+          "default": "/",
+          "description": "URL path prefix the server is mounted under."
+        },
+        "wispPath": {
+          "type": "string",
+          "pattern": "^/[^\\s?#]*$",
+          "default": "/wisp/",
+          "description": "URL path of the Wisp WebSocket endpoint."
+        },
+        "staticDir": {
+          "type": "string",
+          "minLength": 1,
+          "default": "public",
+          "description": "Directory of static client files to serve."
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "description": "How connections are opened. Read by createTransport() in @iridium-group/transport.",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": ["direct", "wisp", "memory"],
+          "default": "direct",
+          "description": "direct: TCP/TLS from Node. wisp: through a Wisp server. memory: in-process, for tests."
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^wss?://[^\\s/?#]+\\S*$",
+          "description": "ws:// or wss:// URL of the Wisp server. Required when type is \"wisp\"."
+        },
+        "connectTimeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000,
+          "default": 10000,
+          "description": "Connect timeout in milliseconds."
+        }
+      },
+      "if": {
+        "properties": { "type": { "const": "wisp" } },
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["url"]
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Address policy for direct connections. Matches AddressPolicy in @iridium-group/transport.",
+      "additionalProperties": false,
+      "properties": {
+        "blockPrivateAddresses": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reject targets that resolve to private or special-purpose addresses."
+        },
+        "blockedPorts": {
+          "$ref": "#/$defs/portList",
+          "default": [25, 465, 587],
+          "description": "Ports that are always rejected."
+        },
+        "allowedPorts": {
+          "$ref": "#/$defs/portList",
+          "description": "When set, only these ports are accepted."
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "enum": ["silent", "error", "warn", "info", "debug"],
+          "default": "info"
+        },
+        "format": {
+          "enum": ["pretty", "json"],
+          "default": "pretty",
+          "description": "pretty for humans, json for one JSON object per line."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "portList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 65535
+      }
+    }
+  }
+}

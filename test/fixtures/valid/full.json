@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../schema/iridium.schema.json",
+  "server": {
+    "host": "127.0.0.1",
+    "port": 3000,
+    "basePath": "/proxy/",
+    "wispPath": "/proxy/wisp/",
+    "staticDir": "dist/client"
+  },
+  "transport": {
+    "type": "direct",
+    "connectTimeoutMs": 5000
+  },
+  "security": {
+    "blockPrivateAddresses": true,
+    "blockedPorts": [25, 465, 587, 2525],
+    "allowedPorts": [80, 443, 8080]
+  },
+  "logging": {
+    "level": "debug",
+    "format": "json"
+  }
+}
